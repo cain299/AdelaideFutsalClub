@@ -1,21 +1,30 @@
 ---
+import { Image } from 'astro:assets';
 import { sponsors } from '../data/sponsors';
 
 interface Props {
   showAwards?: boolean;
 }
-const { showAwards = false } = Astro.props;
+const { showAwards = true } = Astro.props;
+
+const initials = (name: string) =>
+  name.replace(/&/g, ' ').split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('');
 ---
 
 <ul class="wall">
   {sponsors.map((s) => (
     <li class={s.tier}>
-      {s.url ? (
-        <a href={s.url} target="_blank" rel="noopener" class="name">{s.name}</a>
-      ) : (
-        <span class="name">{s.name}</span>
-      )}
-      {showAwards && s.award && <span class="award">Presents {s.award}</span>}
+      <a href={`https://www.instagram.com/${s.instagram}/`} target="_blank" rel="noopener" class="tile">
+        {s.logo ? (
+          <Image src={s.logo} alt="" width={150} height={150} class="logo" />
+        ) : (
+          <span class="logo logo--text" aria-hidden="true">{initials(s.name)}</span>
+        )}
+        <span class="text">
+          <span class="name">{s.name}</span>
+          {showAwards && s.award && <span class="award">Presents {s.award}</span>}
+        </span>
+      </a>
     </li>
   ))}
 </ul>
@@ -26,31 +35,52 @@ const { showAwards = false } = Astro.props;
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
     border-top: 1px solid var(--court-line);
     border-left: 1px solid var(--court-line);
   }
   li {
-    display: grid;
-    align-content: center;
-    gap: 0.35rem;
-    min-height: 7.5rem;
-    padding: 1.25rem 1.5rem;
     border-right: 1px solid var(--court-line);
     border-bottom: 1px solid var(--court-line);
   }
-  .major { grid-column: span 2; min-height: 9rem; }
+  .tile {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    height: 100%;
+    padding: 1.25rem;
+    background: var(--court);
+    text-decoration: none;
+    transition: background-color 0.15s;
+  }
+  .tile:hover { background: #221e19; color: var(--chalk); }
+  .logo {
+    flex: none;
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 0.75rem;
+    object-fit: cover;
+    background: var(--chalk);
+  }
+  .major .logo { width: 5.5rem; height: 5.5rem; }
+  .logo--text {
+    display: grid;
+    place-items: center;
+    background: var(--night);
+    border: 1px solid var(--court-line);
+    color: var(--orange);
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 1.6rem;
+  }
+  .text { display: grid; gap: 0.3rem; }
   .name {
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: 1.5rem;
-    line-height: 1;
+    font-size: 1.35rem;
+    line-height: 1.05;
     text-transform: uppercase;
-    text-decoration: none;
   }
-  .major .name { font-size: 2.1rem; }
+  .major .name { font-size: 1.6rem; }
   .award { color: var(--muted-dark); font-size: 0.875rem; }
-  @media (max-width: 34rem) {
-    .major { grid-column: auto; }
-  }
 </style>

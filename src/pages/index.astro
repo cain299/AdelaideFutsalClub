@@ -10,17 +10,29 @@ import JoinBand from '../components/JoinBand.astro';
 import { site } from '../data/site';
 import { pathway } from '../data/teams';
 import { honours } from '../data/honours';
-import champions from '../assets/instagram/DLe3QZJJuKN.jpg';
-import u10 from '../assets/instagram/DEjGY3AyVj2.jpg';
+import heroPhoto from '../assets/photos/action-3.jpg';
+import champions from '../assets/photos/seniors-champions.jpg';
 
 const majorTitles = honours.flatMap((s) => s.items.filter((i) => i.major).map((i) => ({ ...i, year: s.year })));
 ---
 
 <Base>
   <section class="hero">
-    <CourtLines class="hero-court" />
-    <div class="wrap hero-grid">
-      <div class="hero-copy">
+    <div class="hero-media">
+      <Image
+        src={heroPhoto}
+        alt="A Lions junior in the orange home kit striking the ball on court"
+        widths={[480, 768, 1024, 1365]}
+        sizes="(max-width: 52rem) 100vw, 50vw"
+        quality={85}
+        loading="eager"
+        fetchpriority="high"
+      />
+      <p class="credit">Photo: @captured_by_garreff</p>
+    </div>
+    <div class="hero-copy">
+      <CourtLines class="hero-court" />
+      <div class="hero-inner">
         <h1>
           <span class="line">Home of</span>
           <span class="line">the Lions</span>
@@ -33,17 +45,15 @@ const majorTitles = honours.flatMap((s) => s.items.filter((i) => i.major).map((i
           <a class="btn btn--ghost" href="/contact/">Get in touch</a>
         </div>
       </div>
-      <figure class="hero-photo">
-        <Image src={champions} alt="The Lions senior squad celebrating with the Futsal SA Division 1 trophy" widths={[480, 640]} sizes="(max-width: 52rem) 90vw, 40vw" loading="eager" fetchpriority="high" />
-        <figcaption>Division 1 Champions, June 2025. The squad wore kits from every season since 2016.</figcaption>
-      </figure>
     </div>
   </section>
 
   <Scoreboard />
 
+  <InstagramGrid />
+
   <section class="section section--light" aria-labelledby="futsal-title">
-    <div class="wrap split">
+    <div class="wrap split split--top">
       <div>
         <h2 id="futsal-title">What is futsal?</h2>
         <p class="lede">Five a side, on a hard court, with a smaller ball that barely bounces. Play never stops for long.</p>
@@ -77,9 +87,12 @@ const majorTitles = honours.flatMap((s) => s.items.filter((i) => i.major).map((i
     </div>
   </section>
 
-  <section class="section section--court honours" aria-labelledby="honours-title">
-    <div class="wrap split split--photo">
-      <Image src={u10} alt="Under 10 players and coaches celebrating their national title" widths={[480, 640]} sizes="(max-width: 52rem) 90vw, 40vw" class="honours-photo" />
+  <section class="section section--court" aria-labelledby="honours-title">
+    <div class="wrap split split--top split--photo">
+      <figure class="honours-photo">
+        <Image src={champions} alt="The senior squad celebrating with the Futsal SA Division 1 trophy" widths={[480, 768, 1080]} sizes="(max-width: 52rem) 100vw, 45vw" quality={82} />
+        <figcaption>Senior Men, Futsal SA Division 1 Champions, June 2025.</figcaption>
+      </figure>
       <div>
         <h2 id="honours-title">Ten years of silverware</h2>
         <ul class="titles">
@@ -95,9 +108,7 @@ const majorTitles = honours.flatMap((s) => s.items.filter((i) => i.major).map((i
     </div>
   </section>
 
-  <InstagramGrid />
-
-  <section class="section section--court" aria-labelledby="partners-title">
+  <section class="section" aria-labelledby="partners-title">
     <div class="wrap">
       <div class="section-head">
         <h2 id="partners-title">Our partners</h2>
@@ -111,65 +122,91 @@ const majorTitles = honours.flatMap((s) => s.items.filter((i) => i.major).map((i
 </Base>
 
 <style>
+  /* Hero: copy on the left, a full-height photo bleeding off the right edge. */
   .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    min-height: min(calc(100svh - 4.5rem), 54rem);
+    border-bottom: 1px solid var(--court-line);
+  }
+  .hero-copy {
     position: relative;
     overflow: hidden;
-    padding-block: clamp(3rem, 8vw, 6rem) clamp(3.5rem, 8vw, 6rem);
+    display: flex;
+    align-items: center;
+    padding-block: clamp(3rem, 7vw, 5rem);
+    /* line the copy up with the .wrap left edge */
+    padding-left: max(var(--gutter), calc((100vw - var(--max)) / 2));
+    padding-right: clamp(1.5rem, 4vw, 3.5rem);
   }
-  .hero-court :global(g) {
+  .hero-inner { position: relative; }
+  /* .hero-court lands on the CourtLines component's own SVG, so it needs :global */
+  :global(.hero-court g) {
     stroke-dasharray: 2400;
     stroke-dashoffset: 2400;
     animation: draw 2.2s 0.2s cubic-bezier(0.6, 0, 0.2, 1) forwards;
   }
   @keyframes draw { to { stroke-dashoffset: 0; } }
-
-  .hero-grid {
-    position: relative;
-    display: grid;
-    grid-template-columns: 1.15fr 0.85fr;
-    align-items: center;
-    gap: clamp(2rem, 5vw, 4.5rem);
-  }
   h1 { margin-bottom: 0.3em; }
   h1 .line { display: block; }
   h1 .line:last-child { color: var(--orange); }
   .hero .lede { color: #e6e1da; margin-bottom: 2rem; }
 
-  .hero-photo { position: relative; margin: 0; }
-  .hero-photo::before {
+  .hero-media {
+    position: relative;
+    order: 2;
+    background: var(--court);
+  }
+  .hero-media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 35%;
+  }
+  .hero-media::after {
+    /* soft fade into the black copy panel */
     content: '';
     position: absolute;
-    inset: 1.25rem -1.25rem -1.25rem 1.25rem;
-    background: var(--orange);
-    z-index: -1;
+    inset: 0;
+    background: linear-gradient(90deg, var(--night), transparent 22%);
+    pointer-events: none;
   }
-  .hero-photo { isolation: isolate; }
-  .hero-photo img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: 40% center; }
-  .hero-photo figcaption {
-    margin-top: 2rem;
-    font-size: var(--step--1);
-    color: var(--muted-dark);
-    max-width: 38ch;
+  .hero-media::before {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 6px;
+    background: var(--orange);
+    z-index: 1;
+  }
+  .credit {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 1;
+    margin: 0;
+    padding: 0.2rem 0.5rem;
+    background: rgb(0 0 0 / 0.6);
+    color: #d9d3cb;
+    font-size: 0.75rem;
   }
 
+  /* Two-column sections */
   .split {
     display: grid;
     grid-template-columns: 1fr 1.1fr;
     gap: clamp(2.5rem, 6vw, 5rem);
     align-items: center;
   }
-  .split--photo { grid-template-columns: 0.9fr 1.1fr; }
+  .split--top { align-items: start; }
+  .split--photo { grid-template-columns: 1fr 1fr; }
 
-  .section-head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: end;
-    justify-content: space-between;
-    gap: 0.5rem 2rem;
-    margin-bottom: 2.5rem;
-  }
-  .section-head h2 { margin: 0; max-width: 14ch; }
-  .section-head p { margin: 0; max-width: 36ch; }
+  /* Heading with its intro directly underneath, both left aligned */
+  .section-head { margin-bottom: 2.5rem; }
+  .section-head h2 { margin-bottom: 0.3em; }
+  .section-head p { margin: 0; max-width: 48ch; }
 
   .pathway {
     list-style: none;
@@ -177,7 +214,6 @@ const majorTitles = honours.flatMap((s) => s.items.filter((i) => i.major).map((i
     padding: 0;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    counter-reset: none;
   }
   .pathway li {
     position: relative;
@@ -201,8 +237,10 @@ const majorTitles = honours.flatMap((s) => s.items.filter((i) => i.major).map((i
   .pathway h3 { margin: 0.35rem 0 0.6rem; font-size: var(--step-2); }
   .pathway p { color: var(--muted-dark); font-size: 0.975rem; }
 
-  .honours-photo { width: 100%; aspect-ratio: 1; object-fit: cover; }
-  .titles { list-style: none; margin: 0 0 2rem; padding: 0; }
+  .honours-photo { margin: 0; }
+  .honours-photo img { width: 100%; aspect-ratio: 1; object-fit: cover; object-position: center 70%; }
+  .honours-photo figcaption { margin-top: 0.75rem; font-size: var(--step--1); color: var(--muted-dark); }
+  .titles { list-style: none; margin: 0 0 2rem; padding: 0; border-top: 1px solid var(--court-line); }
   .titles li {
     display: grid;
     grid-template-columns: 4.5rem 1fr;
@@ -218,13 +256,18 @@ const majorTitles = honours.flatMap((s) => s.items.filter((i) => i.major).map((i
     color: var(--ember);
     line-height: 1;
   }
-  .titles strong { display: block; font-weight: 600; }
+  .titles strong { display: block; font-weight: 600; color: var(--chalk); }
   .titles li span:last-child { color: var(--muted-dark); }
-  .titles strong { color: var(--chalk); }
 
   @media (max-width: 52rem) {
-    .hero-grid, .split, .split--photo { grid-template-columns: 1fr; }
-    .hero-photo { max-width: 26rem; margin-right: 1.25rem; }
+    .hero { grid-template-columns: 1fr; min-height: 0; }
+    .hero-media { order: 0; aspect-ratio: 4 / 5; max-height: 70svh; width: 100%; }
+    .hero-media::after { background: linear-gradient(0deg, var(--night), transparent 30%); }
+    .hero-media::before { display: none; }
+    .credit { top: 0.75rem; bottom: auto; right: 0.75rem; }
+    .hero-copy { padding: 0 var(--gutter) 3rem; margin-top: -4rem; overflow: visible; }
+    :global(.hero-court) { display: none; }
+    .split, .split--photo { grid-template-columns: 1fr; }
     .pathway { grid-template-columns: 1fr 1fr; row-gap: 2.5rem; }
   }
   @media (max-width: 30rem) {

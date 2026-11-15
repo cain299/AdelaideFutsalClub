@@ -130,6 +130,45 @@ a:hover { color: var(--orange); }
   white-space: nowrap;
 }
 
+/* Scroll reveal. Only active when JS sets .js-reveal (never for reduced motion).
+   Keep this selector list in sync with src/scripts/reveal.ts.
+   :where() keeps the hidden state at low specificity so .is-visible always wins. */
+.js-reveal :where(
+  .page-head .wrap > *,
+  .section-head,
+  .feed .head,
+  .scoreboard .head,
+  .split > *,
+  .story > *,
+  .contact > *,
+  .become > *,
+  .faq-wrap > h2,
+  .faqs details,
+  .join .inner > *,
+  .scoreboard .games,
+  .feed .grid > li,
+  .pathway > li,
+  .wall > li,
+  .titles > li,
+  .stages > li,
+  .timeline > li,
+  .values > div,
+  .alumni > li,
+  .offers > li,
+  .groups > .group
+) {
+  opacity: 0;
+  transform: translateY(1.75rem);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: calc(var(--reveal-i, 0) * 80ms);
+}
+.js-reveal .is-visible.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
 .skip-link {
   position: absolute; left: 1rem; top: -4rem; z-index: 100;
   background: var(--ember); color: var(--night);

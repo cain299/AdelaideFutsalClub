@@ -1,18 +1,18 @@
-// Fallback Instagram posts, shown when no live feed is configured.
-// For a live feed, set BEHOLD_FEED_URL in Netlify (see README) and rebuild on a schedule.
+// Instagram posts for "Latest from the Lions".
+// The first post is shown large. With BEHOLD_FEED_URL set (see README) the live feed is used instead.
 import type { ImageMetadata } from 'astro';
 
-import champions from '../assets/instagram/DLe3QZJJuKN.jpg';
-import action from '../assets/instagram/Dfl2WlaiaRA.jpg';
-import francese from '../assets/instagram/DfocPEUmYC0.jpg';
-import round5 from '../assets/instagram/Dfgt9Z-vKg6.jpg';
-import u10 from '../assets/instagram/DEjGY3AyVj2.jpg';
-import grasselli from '../assets/instagram/DfWXYqVCX57.jpg';
+import action from '../assets/photos/action-1.jpg';
+import francese from '../assets/photos/francese.jpg';
+import round5 from '../assets/photos/round5-team.jpg';
+import grasselli from '../assets/photos/grasselli-1.jpg';
+import u10 from '../assets/photos/u10-champions-3.jpg';
 
 export type Post = {
   url: string;
   image: ImageMetadata | string;
   alt: string;
+  tag: string;
   caption: string;
   date: string; // ISO date
 };
@@ -23,61 +23,67 @@ export const fallbackPosts: Post[] = [
   {
     url: base + 'Dfl2WlaiaRA/',
     image: action,
-    alt: 'A Lions player in the orange kit on the ball',
-    caption: 'Matchday through the lens of @captured_by_garreff.',
+    alt: 'A Lions player in the orange and black kit running onto the ball',
+    tag: 'Matchday',
+    caption: 'Sunday on court with the Lions.',
     date: '2026-11-10',
   },
   {
     url: base + 'DfocPEUmYC0/',
     image: francese,
-    alt: 'Nicholas Francese in his NPL kit',
-    caption:
-      'Throwback Thursday: Nicholas Francese, from our program to NPL champion. 22 goals in 7 games at the U16 Junior Nationals.',
+    alt: 'Nicholas Francese on the ball in his NPL kit',
+    tag: 'Throwback Thursday',
+    caption: 'Nicholas Francese: from our junior program to NPL champion, via 22 goals in 7 games at the U16 Nationals.',
     date: '2026-11-11',
   },
   {
     url: base + 'Dfgt9Z-vKg6/',
     image: round5,
-    alt: 'A Lions junior team posing in front of the goal',
-    caption: 'Round 5 results: Senior Men edge Ezio FC 4–3, U13 Orange put 12 past KSM White.',
+    alt: 'A Lions junior team lined up in front of the goal',
+    tag: 'Results',
+    caption: 'Round 5: Senior Men edge Ezio FC 4–3 and U13 Orange put 12 past KSM White.',
     date: '2026-11-08',
   },
   {
     url: base + 'DfWXYqVCX57/',
     image: grasselli,
-    alt: 'Max Grasselli in the Lions orange kit',
-    caption: 'Throwback Thursday: Max Grasselli, and the value of saying yes.',
+    alt: 'Max Grasselli in the Lions orange kit with a young player holding a trophy',
+    tag: 'Throwback Thursday',
+    caption: 'Max Grasselli, and the value of saying yes.',
     date: '2026-11-04',
-  },
-  {
-    url: base + 'DLe3QZJJuKN/',
-    image: champions,
-    alt: 'Lions senior squad celebrating with the Division 1 trophy',
-    caption: 'History made. Our seniors are Futsal SA Division 1 Champions for the first time.',
-    date: '2025-06-29',
   },
   {
     url: base + 'DEjGY3AyVj2/',
     image: u10,
-    alt: 'Under 10 players celebrating with their coaches',
-    caption: 'The most dominant campaign in Futsal Oz Nationals history. U10 National Champions.',
+    alt: 'Under 10 players with their national championship medals',
+    tag: 'Nationals',
+    caption: 'U10 Futsal Oz National Champions. The most dominant campaign in the tournament’s history.',
     date: '2025-01-07',
   },
 ];
 
 type BeholdPost = {
   permalink: string;
-  mediaType: string;
   mediaUrl?: string;
   thumbnailUrl?: string;
-  sizes?: { medium?: { mediaUrl: string } };
+  sizes?: { medium?: { mediaUrl: string }; large?: { mediaUrl: string } };
   caption?: string;
   prunedCaption?: string;
   timestamp: string;
 };
 
+/** Guesses a short label from the caption, matching the club's regular post series. */
+function tagFor(caption: string): string {
+  const c = caption.toLowerCase();
+  if (c.includes('throwback')) return 'Throwback Thursday';
+  if (c.includes('weekly honours')) return 'Weekly Honours';
+  if (c.includes('results')) return 'Results';
+  if (c.includes('sponsor')) return 'Partners';
+  return 'Club news';
+}
+
 /** Fetches the live feed at build time, falling back to the curated posts. */
-export async function getPosts(limit = 6): Promise<Post[]> {
+export async function getPosts(limit = 5): Promise<Post[]> {
   const feedUrl = import.meta.env.BEHOLD_FEED_URL;
   if (!feedUrl) return fallbackPosts.slice(0, limit);
   try {
@@ -86,13 +92,17 @@ export async function getPosts(limit = 6): Promise<Post[]> {
     const data = await res.json();
     const list: BeholdPost[] = Array.isArray(data) ? data : data.posts ?? [];
     const posts = list
-      .map((p) => ({
-        url: p.permalink,
-        image: p.sizes?.medium?.mediaUrl ?? p.thumbnailUrl ?? p.mediaUrl ?? '',
-        alt: 'Instagram post from Adelaide Lions Futsal Club',
-        caption: (p.prunedCaption ?? p.caption ?? '').split('\n')[0].slice(0, 160),
-        date: p.timestamp,
-      }))
+      .map((p) => {
+        const caption = (p.prunedCaption ?? p.caption ?? '').split('\n')[0].slice(0, 160);
+        return {
+          url: p.permalink,
+          image: p.sizes?.large?.mediaUrl ?? p.sizes?.medium?.mediaUrl ?? p.thumbnailUrl ?? p.mediaUrl ?? '',
+          alt: 'Instagram post from Adelaide Lions Futsal Club',
+          tag: tagFor(p.caption ?? ''),
+          caption,
+          date: p.timestamp,
+        };
+      })
       .filter((p) => p.image);
     return posts.length ? posts.slice(0, limit) : fallbackPosts.slice(0, limit);
   } catch (err) {
