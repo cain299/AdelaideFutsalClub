@@ -1,0 +1,92 @@
+---
+import { latestRound } from '../data/teams';
+import { socials } from '../data/site';
+
+const ig = socials.find((s) => s.name === 'Instagram')!;
+---
+
+<section class="scoreboard" aria-labelledby="scoreboard-title">
+  <div class="wrap head">
+    <h2 id="scoreboard-title">{latestRound.label} results</h2>
+    <p>Brought to you by {latestRound.sponsor}. <a href={ig.url} target="_blank" rel="noopener">Every result on Instagram</a></p>
+  </div>
+  <div class="wrap">
+    <ol class="games">
+      {latestRound.results.map((r) => {
+        const outcome = r.us > r.them ? 'win' : r.us < r.them ? 'loss' : 'draw';
+        return (
+          <li class={outcome}>
+            <span class="team">{r.team}</span>
+            <span class="score">
+              <span>{r.us}</span><span class="dash" aria-hidden="true">–</span><span>{r.them}</span>
+            </span>
+            <span class="opp">v {r.opponent}</span>
+            <span class="visually-hidden">{outcome}</span>
+          </li>
+        );
+      })}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .scoreboard {
+    background: var(--court);
+    border-block: 1px solid var(--court-line);
+    padding-block: 1.75rem 2rem;
+  }
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 2rem;
+    margin-bottom: 1.25rem;
+  }
+  h2 { font-size: var(--step-2); margin: 0; }
+  .head p { margin: 0; color: var(--muted-dark); font-size: 0.95rem; }
+  .games {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0.5rem;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(10.5rem, 1fr);
+    gap: 1px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-color: var(--orange) var(--court);
+    scrollbar-width: thin;
+    background: var(--court-line);
+    border: 1px solid var(--court-line);
+  }
+  .games li {
+    position: relative; /* contains the visually-hidden outcome label */
+    scroll-snap-align: start;
+    display: grid;
+    gap: 0.2rem;
+    padding: 0.9rem 1rem 1rem;
+    background: var(--court);
+    border-top: 3px solid var(--court-line);
+  }
+  .games li.win { border-top-color: var(--orange); }
+  .team {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.15rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .score {
+    display: flex;
+    gap: 0.25rem;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 2.6rem;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .win .score span:first-child { color: var(--orange); }
+  .dash { color: var(--muted-dark); }
+  .opp { color: var(--muted-dark); font-size: 0.875rem; }
+</style>

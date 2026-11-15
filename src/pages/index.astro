@@ -1,0 +1,233 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import CourtLines from '../components/CourtLines.astro';
+import CourtDiagram from '../components/CourtDiagram.astro';
+import Scoreboard from '../components/Scoreboard.astro';
+import InstagramGrid from '../components/InstagramGrid.astro';
+import SponsorWall from '../components/SponsorWall.astro';
+import JoinBand from '../components/JoinBand.astro';
+import { site } from '../data/site';
+import { pathway } from '../data/teams';
+import { honours } from '../data/honours';
+import champions from '../assets/instagram/DLe3QZJJuKN.jpg';
+import u10 from '../assets/instagram/DEjGY3AyVj2.jpg';
+
+const majorTitles = honours.flatMap((s) => s.items.filter((i) => i.major).map((i) => ({ ...i, year: s.year })));
+---
+
+<Base>
+  <section class="hero">
+    <CourtLines class="hero-court" />
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <h1>
+          <span class="line">Home of</span>
+          <span class="line">the Lions</span>
+        </h1>
+        <p class="lede">
+          {site.legalName} is a family club for boys and girls from Under 6 through to our senior side. Respect, friendships and fun, and the 2025 Futsal SA Division&nbsp;1 Champions.
+        </p>
+        <div class="btn-row">
+          <a class="btn" href={site.registerUrl} target="_blank" rel="noopener">Join the club</a>
+          <a class="btn btn--ghost" href="/contact/">Get in touch</a>
+        </div>
+      </div>
+      <figure class="hero-photo">
+        <Image src={champions} alt="The Lions senior squad celebrating with the Futsal SA Division 1 trophy" widths={[480, 640]} sizes="(max-width: 52rem) 90vw, 40vw" loading="eager" fetchpriority="high" />
+        <figcaption>Division 1 Champions, June 2025. The squad wore kits from every season since 2016.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <Scoreboard />
+
+  <section class="section section--light" aria-labelledby="futsal-title">
+    <div class="wrap split">
+      <div>
+        <h2 id="futsal-title">What is futsal?</h2>
+        <p class="lede">Five a side, on a hard court, with a smaller ball that barely bounces. Play never stops for long.</p>
+        <p>
+          That means more touches, more decisions and more creativity than any other version of the game. Players learn close control, quick thinking and how to find a way out of tight spaces, which is why so many of the world's best footballers grew up on a futsal court.
+        </p>
+        <p>
+          Every player attacks and every player defends. Our coaches teach the positions and the rotations between them from the junior age groups up.
+        </p>
+      </div>
+      <CourtDiagram />
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="pathway-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="pathway-title">From first touch to first team</h2>
+        <p class="muted">One club, one way of playing, and a clear path for every age.</p>
+      </div>
+      <ol class="pathway">
+        {pathway.map((p) => (
+          <li>
+            <span class="ages">{p.ages}</span>
+            <h3>{p.stage}</h3>
+            <p>{p.summary}</p>
+          </li>
+        ))}
+      </ol>
+      <a class="btn btn--ghost" href="/teams/">See all teams</a>
+    </div>
+  </section>
+
+  <section class="section section--court honours" aria-labelledby="honours-title">
+    <div class="wrap split split--photo">
+      <Image src={u10} alt="Under 10 players and coaches celebrating their national title" widths={[480, 640]} sizes="(max-width: 52rem) 90vw, 40vw" class="honours-photo" />
+      <div>
+        <h2 id="honours-title">Ten years of silverware</h2>
+        <ul class="titles">
+          {majorTitles.map((t) => (
+            <li>
+              <span class="year">{t.year}</span>
+              <span><strong>{t.title}</strong> {t.detail}</span>
+            </li>
+          ))}
+        </ul>
+        <a class="btn btn--ghost" href="/honours/">Full honours list</a>
+      </div>
+    </div>
+  </section>
+
+  <InstagramGrid />
+
+  <section class="section section--court" aria-labelledby="partners-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="partners-title">Our partners</h2>
+        <p class="muted">Local businesses who keep the Lions on the court. <a href="/sponsors/">Become a sponsor</a></p>
+      </div>
+      <SponsorWall />
+    </div>
+  </section>
+
+  <JoinBand />
+</Base>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(3rem, 8vw, 6rem) clamp(3.5rem, 8vw, 6rem);
+  }
+  .hero-court :global(g) {
+    stroke-dasharray: 2400;
+    stroke-dashoffset: 2400;
+    animation: draw 2.2s 0.2s cubic-bezier(0.6, 0, 0.2, 1) forwards;
+  }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+
+  .hero-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    align-items: center;
+    gap: clamp(2rem, 5vw, 4.5rem);
+  }
+  h1 { margin-bottom: 0.3em; }
+  h1 .line { display: block; }
+  h1 .line:last-child { color: var(--orange); }
+  .hero .lede { color: #e6e1da; margin-bottom: 2rem; }
+
+  .hero-photo { position: relative; margin: 0; }
+  .hero-photo::before {
+    content: '';
+    position: absolute;
+    inset: 1.25rem -1.25rem -1.25rem 1.25rem;
+    background: var(--orange);
+    z-index: -1;
+  }
+  .hero-photo { isolation: isolate; }
+  .hero-photo img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: 40% center; }
+  .hero-photo figcaption {
+    margin-top: 2rem;
+    font-size: var(--step--1);
+    color: var(--muted-dark);
+    max-width: 38ch;
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: clamp(2.5rem, 6vw, 5rem);
+    align-items: center;
+  }
+  .split--photo { grid-template-columns: 0.9fr 1.1fr; }
+
+  .section-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 0.5rem 2rem;
+    margin-bottom: 2.5rem;
+  }
+  .section-head h2 { margin: 0; max-width: 14ch; }
+  .section-head p { margin: 0; max-width: 36ch; }
+
+  .pathway {
+    list-style: none;
+    margin: 0 0 2.5rem;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    counter-reset: none;
+  }
+  .pathway li {
+    position: relative;
+    padding: 2.25rem 1.5rem 0 0;
+    border-top: 2px solid var(--court-line);
+  }
+  .pathway li::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 0;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--night);
+    border: 2px solid var(--orange);
+  }
+  .pathway li:last-child::before { background: var(--orange); }
+  .pathway li:last-child { border-top-color: var(--orange); }
+  .ages { color: var(--orange); font-weight: 600; font-size: 0.95rem; }
+  .pathway h3 { margin: 0.35rem 0 0.6rem; font-size: var(--step-2); }
+  .pathway p { color: var(--muted-dark); font-size: 0.975rem; }
+
+  .honours-photo { width: 100%; aspect-ratio: 1; object-fit: cover; }
+  .titles { list-style: none; margin: 0 0 2rem; padding: 0; }
+  .titles li {
+    display: grid;
+    grid-template-columns: 4.5rem 1fr;
+    gap: 1rem;
+    align-items: baseline;
+    padding-block: 0.9rem;
+    border-bottom: 1px solid var(--court-line);
+  }
+  .titles .year {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 1.9rem;
+    color: var(--ember);
+    line-height: 1;
+  }
+  .titles strong { display: block; font-weight: 600; }
+  .titles li span:last-child { color: var(--muted-dark); }
+  .titles strong { color: var(--chalk); }
+
+  @media (max-width: 52rem) {
+    .hero-grid, .split, .split--photo { grid-template-columns: 1fr; }
+    .hero-photo { max-width: 26rem; margin-right: 1.25rem; }
+    .pathway { grid-template-columns: 1fr 1fr; row-gap: 2.5rem; }
+  }
+  @media (max-width: 30rem) {
+    .pathway { grid-template-columns: 1fr; }
+  }
+</style>

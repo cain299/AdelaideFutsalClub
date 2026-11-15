@@ -1,0 +1,16 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import { socials } from '../data/site';
+
+const ig = socials.find((s) => s.name === 'Instagram')!;
+---
+
+<Base title="Message sent">
+  <PageHead title="Message sent" lede="Thanks for getting in touch. A club volunteer will reply by email, usually within a couple of days.">
+    <div class="btn-row" style="margin-top: 2rem">
+      <a class="btn" href="/">Back to home</a>
+      <a class="btn btn--ghost" href={ig.url} target="_blank" rel="noopener">Follow us on Instagram</a>
+    </div>
+  </PageHead>
+</Base>

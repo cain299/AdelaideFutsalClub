@@ -1,0 +1,148 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import JoinBand from '../components/JoinBand.astro';
+import { site } from '../data/site';
+import stateReps from '../assets/instagram/DEf1kJdTaVM.jpg';
+import francese from '../assets/instagram/DfocPEUmYC0.jpg';
+import grasselli from '../assets/instagram/DfWXYqVCX57.jpg';
+
+const values = [
+  { name: 'Respect', text: 'For team-mates, opponents, referees and the parents on the sideline.' },
+  { name: 'Friendships', text: 'Players come for the futsal and stay for the people. Many of our first juniors still help out today.' },
+  { name: 'Fun', text: 'Kids who enjoy the game keep playing it. Every session is built around the ball and around enjoying it.' },
+];
+
+const alumni = [
+  {
+    name: 'Nicholas Francese',
+    image: francese,
+    alt: 'Nicholas Francese in his NPL kit',
+    story:
+      'Came through our junior program and won the U16 Junior Nationals Golden Boot with 22 goals in 7 games. He went on to become an NPL champion.',
+  },
+  {
+    name: 'Max Grasselli',
+    image: grasselli,
+    alt: 'Max Grasselli in the Lions orange kit',
+    story:
+      'Joined in the early years with few connections to the club or the sport. He said yes to every opportunity, and it shaped the player and person he became.',
+  },
+];
+---
+
+<Base title="About the club" description="The story of Adelaide Lions Futsal Club: founded in 2015, built on respect, friendships and fun.">
+  <PageHead title="About the Lions" lede={`Founded in ${site.founded}, ${site.legalName} has grown from a handful of junior teams into a club with state and national titles at junior and senior level.`} />
+
+  <section class="section">
+    <div class="wrap story">
+      <div class="prose">
+        <h2>Our story</h2>
+        <p>
+          The club started in 2015 with a simple idea: build a family club where the focus is not just football, but respect, friendships and, most importantly, fun.
+        </p>
+        <p>
+          Within three seasons our juniors were South Australian league champions and national champions, winning the Under 12 Futsal Oz Junior Nationals in 2018 without losing a game.
+        </p>
+        <p>
+          In 2025 the senior side won the Futsal SA Division 1 title for the first time. For the decider the squad wore kits from every season since 2016, a nod to everyone who built the club. That same year our Under 10s became national champions.
+        </p>
+        <p>
+          Today we field teams from Under 8 to seniors, including girls' teams. Sessions are run by accredited coaches following the Football Australia and FIFA futsal curriculum.
+        </p>
+      </div>
+      <figure class="story-photo">
+        <Image src={stateReps} alt="Lions players and coaches representing South Australia" widths={[480, 640]} sizes="(max-width: 52rem) 90vw, 35vw" />
+        <figcaption>Lions players representing South Australia at the 2025 National Futsal Championships.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section section--light" aria-labelledby="values-title">
+    <div class="wrap">
+      <h2 id="values-title">What we stand for</h2>
+      <dl class="values">
+        {values.map((v) => (
+          <div>
+            <dt>{v.name}</dt>
+            <dd>{v.text}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="alumni-title">
+    <div class="wrap">
+      <h2 id="alumni-title">Where Lions go next</h2>
+      <p class="muted intro">Futsal builds the touch and the decision making that carry into football at every level. A few of the players who started here:</p>
+      <ul class="alumni">
+        {alumni.map((a) => (
+          <li>
+            <Image src={a.image} alt={a.alt} widths={[320, 640]} sizes="(max-width: 40rem) 90vw, 30vw" />
+            <div>
+              <h3>{a.name}</h3>
+              <p>{a.story}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <JoinBand />
+</Base>
+
+<style>
+  .story {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: clamp(2.5rem, 6vw, 5rem);
+    align-items: start;
+  }
+  .prose p { color: #e6e1da; }
+  .story-photo { margin: 0; }
+  .story-photo img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+  .story-photo figcaption { margin-top: 0.75rem; font-size: var(--step--1); color: var(--muted-dark); }
+
+  .values {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin: 2rem 0 0;
+  }
+  .values div { border-top: 3px solid var(--orange); padding-top: 1.25rem; }
+  .values dt {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: var(--step-3);
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: 0.6rem;
+  }
+  .values dd { margin: 0; color: var(--muted-light); }
+
+  .intro { margin-bottom: 2.5rem; }
+  .alumni {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(1.5rem, 4vw, 3rem);
+  }
+  .alumni li { display: grid; grid-template-columns: 9rem 1fr; gap: 1.5rem; align-items: start; }
+  .alumni img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+  .alumni h3 { margin-bottom: 0.4rem; }
+  .alumni p { color: var(--muted-dark); }
+
+  @media (max-width: 52rem) {
+    .story, .alumni { grid-template-columns: 1fr; }
+    .values { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 30rem) {
+    .alumni li { grid-template-columns: 1fr; }
+    .alumni img { max-width: 14rem; }
+  }
+</style>

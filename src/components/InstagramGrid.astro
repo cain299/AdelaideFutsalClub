@@ -1,0 +1,96 @@
+---
+import { Image } from 'astro:assets';
+import { getPosts } from '../data/instagram';
+import { socials } from '../data/site';
+import SocialIcon from './SocialIcon.astro';
+
+interface Props {
+  limit?: number;
+}
+const { limit = 6 } = Astro.props;
+const posts = await getPosts(limit);
+const ig = socials.find((s) => s.name === 'Instagram')!;
+const fmt = new Intl.DateTimeFormat('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
+---
+
+<section class="section feed" aria-labelledby="feed-title">
+  <div class="wrap">
+    <div class="head">
+      <h2 id="feed-title">Latest from the Lions</h2>
+      <a class="btn btn--ghost" href={ig.url} target="_blank" rel="noopener">
+        <SocialIcon name="Instagram" size={20} /> Follow {ig.handle}
+      </a>
+    </div>
+    <ul class="grid">
+      {posts.map((p) => (
+        <li>
+          <a href={p.url} target="_blank" rel="noopener" class="post">
+            {typeof p.image === 'string' ? (
+              <img src={p.image} alt={p.alt} width="640" height="640" loading="lazy" decoding="async" />
+            ) : (
+              <Image src={p.image} alt={p.alt} widths={[320, 640]} sizes="(max-width: 40rem) 50vw, 33vw" />
+            )}
+            <span class="caption">
+              <time datetime={p.date}>{fmt.format(new Date(p.date))}</time>
+              {p.caption}
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1.25rem 2rem;
+    margin-bottom: 2rem;
+  }
+  .head h2 { margin: 0; }
+  .grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(0.5rem, 1.5vw, 1rem);
+  }
+  .post {
+    position: relative;
+    display: block;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: var(--court);
+    text-decoration: none;
+  }
+  .post img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+  .caption {
+    position: absolute;
+    inset: auto 0 0 0;
+    display: grid;
+    gap: 0.3rem;
+    padding: 2.5rem 1rem 1rem;
+    background: linear-gradient(transparent, rgb(0 0 0 / 0.9) 45%);
+    color: var(--chalk);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    opacity: 0;
+    transform: translateY(0.5rem);
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  time { color: var(--orange); font-weight: 600; font-size: var(--step--1); }
+  .post:hover img, .post:focus-visible img { transform: scale(1.04); }
+  .post:hover .caption, .post:focus-visible .caption { opacity: 1; transform: none; }
+  @media (hover: none) {
+    .caption { opacity: 1; transform: none; }
+    .caption { font-size: 0.8rem; }
+  }
+  @media (max-width: 40rem) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .caption { display: none; }
+  }
+</style>

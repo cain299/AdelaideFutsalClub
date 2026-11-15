@@ -1,0 +1,135 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import SocialIcon from '../components/SocialIcon.astro';
+import { site, socials } from '../data/site';
+
+const topics = ['Joining a team', 'Clinics and academies', 'Sponsorship', 'Something else'];
+---
+
+<Base title="Contact" description="Get in touch with Adelaide Lions Futsal Club about joining a team, clinics or sponsorship.">
+  <PageHead title="Get in touch" lede="Questions about joining, clinics or sponsorship. Send a message and a club volunteer will reply, usually within a couple of days." />
+
+  <section class="section">
+    <div class="wrap contact">
+      <form
+        name="contact"
+        method="POST"
+        action="/thanks/"
+        data-netlify="true"
+        netlify-honeypot="company"
+        class="form"
+      >
+        <input type="hidden" name="form-name" value="contact" />
+        <p class="visually-hidden">
+          <label>Leave this empty <input name="company" tabindex="-1" autocomplete="off" /></label>
+        </p>
+
+        <div class="row">
+          <div class="field">
+            <label for="name">Your name</label>
+            <input id="name" name="name" type="text" autocomplete="name" required />
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" required />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="phone">Phone <span class="opt">(optional)</span></label>
+            <input id="phone" name="phone" type="tel" autocomplete="tel" />
+          </div>
+          <div class="field">
+            <label for="topic">What is it about?</label>
+            <select id="topic" name="topic">
+              {topics.map((t) => <option>{t}</option>)}
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="6" required placeholder="For junior players, include their age group."></textarea>
+        </div>
+
+        <button class="btn" type="submit">Send message</button>
+      </form>
+
+      <aside class="details" aria-label="Other ways to reach us">
+        <div>
+          <h2>Email</h2>
+          <p><a href={`mailto:${site.email}`}>{site.email}</a></p>
+        </div>
+        <div>
+          <h2>Phone</h2>
+          <ul>
+            {site.contacts.map((c) => (
+              <li>{c.name} <a href={`tel:${c.phone.replace(/\s/g, '')}`}>{c.phone}</a></li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <h2>Ready to play?</h2>
+          <p>Skip the message and <a href={site.registerUrl} target="_blank" rel="noopener">fill in the registration form</a>.</p>
+        </div>
+        <div>
+          <h2>Follow us</h2>
+          <ul class="social">
+            {socials.map((s) => (
+              <li>
+                <a href={s.url} target="_blank" rel="noopener">
+                  <SocialIcon name={s.name} />
+                  <span>{s.handle}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .contact {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: clamp(2.5rem, 6vw, 5rem);
+    align-items: start;
+  }
+  .form { display: grid; gap: 1.25rem; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  .field { display: grid; gap: 0.4rem; }
+  label { font-weight: 600; font-size: 0.95rem; }
+  .opt { color: var(--muted-dark); font-weight: 400; }
+  input, select, textarea {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid #4a433b;
+    border-radius: var(--radius);
+    background: var(--court);
+    color: var(--chalk);
+    font: inherit;
+  }
+  textarea { resize: vertical; }
+  input:focus-visible, select:focus-visible, textarea:focus-visible { border-color: var(--ember); }
+  ::placeholder { color: #8a8278; }
+  .form .btn { justify-self: start; }
+
+  .details { display: grid; gap: 2rem; }
+  .details h2 { font-size: var(--step-1); color: var(--orange); margin-bottom: 0.5rem; }
+  .details p, .details ul { margin: 0; }
+  .details ul { list-style: none; padding: 0; display: grid; gap: 0.4rem; }
+  .details li a { margin-left: 0.35rem; }
+  .social a { display: inline-flex; align-items: center; gap: 0.6rem; margin: 0 !important; text-decoration: none; }
+
+  @media (max-width: 52rem) {
+    .contact { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 34rem) {
+    .row { grid-template-columns: 1fr; }
+  }
+</style>

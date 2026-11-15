@@ -1,0 +1,137 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import JoinBand from '../components/JoinBand.astro';
+import { pathway, teams } from '../data/teams';
+import { site } from '../data/site';
+
+const groups = ['Seniors', 'Youth', 'Juniors', 'Girls', 'Mini Lions'] as const;
+
+const faqs = [
+  {
+    q: 'My child has never played. Can they join?',
+    a: 'Yes. Our youngest groups start from Under 6 and no experience is needed. Coaches place every player in a team that suits their age and stage.',
+  },
+  {
+    q: 'When and where is training?',
+    a: 'Training days, times and venues are set each season once teams are finalised. Register your interest and we will send the details for your age group.',
+  },
+  {
+    q: 'Do you have girls’ teams?',
+    a: 'Yes. We run girls’ teams at Under 12 and Under 13 alongside our mixed teams, and girls are welcome in every mixed age group.',
+  },
+  {
+    q: 'What does a player need?',
+    a: 'Flat-soled indoor shoes, shin pads and a water bottle. Club playing kit is organised once teams are set.',
+  },
+];
+---
+
+<Base title="Teams and programs" description="Futsal teams for boys and girls from Under 6 to seniors at Adelaide Lions Futsal Club.">
+  <PageHead title="Teams and programs" lede={`${teams.length} teams this season, from Under 8 to Senior Men, including girls' teams.`}>
+    <div class="btn-row" style="margin-top: 2rem">
+      <a class="btn" href={site.registerUrl} target="_blank" rel="noopener">{site.registerLabel}</a>
+    </div>
+  </PageHead>
+
+  <section class="section" aria-labelledby="pathway-title">
+    <div class="wrap">
+      <h2 id="pathway-title">The pathway</h2>
+      <ol class="stages">
+        {pathway.map((p) => (
+          <li>
+            <div class="stage-name">
+              <h3>{p.stage}</h3>
+              <span>{p.ages}</span>
+            </div>
+            <p>{p.summary}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section--court" aria-labelledby="teams-title">
+    <div class="wrap">
+      <h2 id="teams-title">2026 teams</h2>
+      <div class="groups">
+        {groups.map((g) => {
+          const list = teams.filter((t) => t.group === g);
+          return list.length > 0 && (
+            <div class="group">
+              <h3>{g}</h3>
+              <ul>
+                {list.map((t) => <li>{t.name}</li>)}
+              </ul>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--light" aria-labelledby="faq-title">
+    <div class="wrap faq-wrap">
+      <h2 id="faq-title">Questions from parents</h2>
+      <div class="faqs">
+        {faqs.map((f) => (
+          <details>
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+        <p class="more">Something else? <a href="/contact/">Send us a message</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <JoinBand />
+</Base>
+
+<style>
+  .stages { list-style: none; margin: 2rem 0 0; padding: 0; }
+  .stages li {
+    display: grid;
+    grid-template-columns: minmax(12rem, 1fr) 2fr;
+    gap: 1rem 3rem;
+    padding-block: 1.75rem;
+    border-top: 1px solid var(--court-line);
+  }
+  .stages li:last-child { border-bottom: 1px solid var(--court-line); }
+  .stage-name h3 { margin: 0 0 0.25rem; font-size: var(--step-3); }
+  .stage-name span { color: var(--orange); font-weight: 600; }
+  .stages p { margin: 0; color: #e6e1da; font-size: 1.1rem; align-self: center; }
+
+  .groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+  .group h3 { font-size: var(--step-1); color: var(--orange); border-bottom: 1px solid var(--court-line); padding-bottom: 0.6rem; }
+  .group ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.4rem; }
+  .group li { font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; text-transform: uppercase; line-height: 1.1; }
+
+  .faq-wrap { display: grid; grid-template-columns: 1fr 1.6fr; gap: 3rem; align-items: start; }
+  details { border-bottom: 1px solid #cfccc6; }
+  details:first-child { border-top: 1px solid #cfccc6; }
+  summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 1.1rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: '+'; font-family: var(--font-display); font-weight: 900; font-size: 1.6rem; line-height: 1; color: var(--orange-deep); }
+  details[open] summary::after { content: '\2212'; }
+  details p { color: var(--muted-light); margin-bottom: 1.25rem; }
+  .more { margin-top: 1.5rem; }
+
+  @media (max-width: 52rem) {
+    .stages li, .faq-wrap { grid-template-columns: 1fr; }
+  }
+</style>

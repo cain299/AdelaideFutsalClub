@@ -1,0 +1,142 @@
+---
+import { Image } from 'astro:assets';
+import crest from '../assets/crest.jpg';
+import { nav, site } from '../data/site';
+
+const path = Astro.url.pathname;
+const isCurrent = (href: string) => path === href || path.startsWith(href);
+---
+
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label={`${site.name}, home`}>
+      <Image src={crest} alt="" width={48} height={48} class="crest" loading="eager" />
+      <span class="wordmark">Adelaide<br />Lions</span>
+    </a>
+
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+      <span class="visually-hidden">Menu</span>
+      <span class="bars" aria-hidden="true"></span>
+    </button>
+
+    <nav id="site-nav" class="site-nav" aria-label="Main">
+      <ul>
+        {nav.map((item) => (
+          <li>
+            <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a>
+          </li>
+        ))}
+      </ul>
+      <a class="btn nav-cta" href={site.registerUrl} target="_blank" rel="noopener">Join the club</a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
+  const header = document.querySelector('.site-header');
+  toggle?.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!open));
+    header?.classList.toggle('is-open', !open);
+  });
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgb(0 0 0 / 0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--court-line);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-height: 4.5rem;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    text-decoration: none;
+  }
+  .brand:hover { color: var(--chalk); }
+  .crest { border-radius: 50%; width: 48px; height: 48px; }
+  .wordmark {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 1.3rem;
+    line-height: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .site-nav { display: flex; align-items: center; gap: 2rem; }
+  .site-nav ul { display: flex; gap: 1.75rem; list-style: none; margin: 0; padding: 0; }
+  .site-nav ul a {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    padding-block: 0.4rem;
+    border-bottom: 2px solid transparent;
+  }
+  .site-nav ul a[aria-current='page'] { border-color: var(--orange); }
+  .nav-cta { min-height: 2.6rem; padding: 0.55em 1.1em; font-size: 1.1rem; }
+
+  .menu-toggle {
+    display: none;
+    width: 3rem;
+    height: 3rem;
+    border: 0;
+    background: transparent;
+    color: var(--chalk);
+    cursor: pointer;
+  }
+  .bars, .bars::before, .bars::after {
+    display: block;
+    width: 1.6rem;
+    height: 2px;
+    margin-inline: auto;
+    background: currentColor;
+    transition: transform 0.2s;
+  }
+  .bars { position: relative; }
+  .bars::before, .bars::after { content: ''; position: absolute; left: 0; }
+  .bars::before { top: -7px; }
+  .bars::after { top: 7px; }
+  .is-open .bars { background: transparent; }
+  .is-open .bars::before { transform: translateY(7px) rotate(45deg); }
+  .is-open .bars::after { transform: translateY(-7px) rotate(-45deg); }
+
+  @media (max-width: 52rem) {
+    .menu-toggle { display: block; }
+    .site-nav {
+      display: none;
+      position: absolute;
+      inset: 100% 0 auto 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1.5rem;
+      padding: 1.5rem var(--gutter) 2rem;
+      background: var(--night);
+      border-bottom: 1px solid var(--court-line);
+    }
+    .is-open .site-nav { display: flex; }
+    .site-nav ul { flex-direction: column; gap: 0; }
+    .site-nav ul a {
+      display: block;
+      font-size: 2rem;
+      padding-block: 0.5rem;
+      border-bottom: 1px solid var(--court-line);
+    }
+    .site-nav ul a[aria-current='page'] { color: var(--orange); border-color: var(--court-line); }
+    .nav-cta { justify-content: center; min-height: 3.25rem; font-size: 1.3rem; }
+  }
+</style>

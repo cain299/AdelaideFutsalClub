@@ -1,0 +1,65 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import SponsorWall from '../components/SponsorWall.astro';
+import { site, socials } from '../data/site';
+
+const ig = socials.find((s) => s.name === 'Instagram')!;
+
+const offers = [
+  { title: 'Weekly honours', text: 'Put your name on one of our weekly awards, posted every round to our Instagram following.' },
+  { title: 'Playing kit', text: 'Your logo on match shirts or training wear, seen at every game and in every team photo.' },
+  { title: 'Matchday results', text: 'Present the round results, our most shared post each week.' },
+  { title: 'Website and events', text: 'A listing and link on this site, plus recognition at our end-of-season presentation.' },
+];
+---
+
+<Base title="Sponsors" description="The local businesses who support Adelaide Lions Futsal Club, and how to become a club partner.">
+  <PageHead title="Our partners" lede="Local businesses keep fees low and the Lions on the court. Thank you to every one of them." />
+
+  <section class="section">
+    <div class="wrap">
+      <SponsorWall showAwards />
+    </div>
+  </section>
+
+  <section class="section section--light" aria-labelledby="become-title">
+    <div class="wrap become">
+      <div>
+        <h2 id="become-title">Partner with the Lions</h2>
+        <p class="lede">Reach hundreds of Adelaide families every week, and back a club that develops young players.</p>
+        <p class="muted">Every package is tailored. Tell us about your business and what you'd like to get out of it.</p>
+        <div class="btn-row">
+          <a class="btn" href={`mailto:${site.email}?subject=Sponsorship enquiry`}>Email us about sponsorship</a>
+          <a class="btn btn--ghost" href={ig.url} target="_blank" rel="noopener">See our Instagram</a>
+        </div>
+      </div>
+      <ul class="offers">
+        {offers.map((o) => (
+          <li>
+            <h3>{o.title}</h3>
+            <p>{o.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .become {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2.5rem, 6vw, 5rem);
+    align-items: start;
+  }
+  .become .btn-row { margin-top: 2rem; }
+  .offers { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+  .offers li { padding-block: 1.25rem; border-top: 1px solid #cfccc6; }
+  .offers li:last-child { border-bottom: 1px solid #cfccc6; }
+  .offers h3 { font-size: var(--step-1); margin-bottom: 0.3rem; }
+  .offers p { margin: 0; color: var(--muted-light); }
+  @media (max-width: 52rem) {
+    .become { grid-template-columns: 1fr; }
+  }
+</style>

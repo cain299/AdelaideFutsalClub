@@ -1,0 +1,39 @@
+---
+// Half a futsal court, top-down: halfway line, centre circle and penalty area.
+// Used as a backdrop behind headlines. Purely decorative.
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<svg class={`court-lines ${className}`} viewBox="0 0 800 600" fill="none" aria-hidden="true" focusable="false" preserveAspectRatio="xMaxYMid slice">
+  <g stroke="currentColor" stroke-width="2">
+    <!-- touchline box -->
+    <rect x="40" y="40" width="1400" height="520" />
+    <!-- halfway line -->
+    <line x1="560" y1="40" x2="560" y2="560" />
+    <!-- centre circle and spot -->
+    <circle cx="560" cy="300" r="120" />
+    <circle cx="560" cy="300" r="5" fill="currentColor" />
+    <!-- penalty area (6 m arcs joined by a straight line) -->
+    <path d="M40 150 A 150 150 0 0 1 190 285 L 190 315 A 150 150 0 0 1 40 450" />
+    <circle cx="160" cy="300" r="4" fill="currentColor" />
+    <!-- goal -->
+    <rect x="20" y="255" width="20" height="90" />
+    <!-- corner arcs -->
+    <path d="M40 65 A 25 25 0 0 0 65 40" />
+    <path d="M65 560 A 25 25 0 0 0 40 535" />
+  </g>
+</svg>
+
+<style>
+  .court-lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    color: var(--court-line);
+    pointer-events: none;
+  }
+</style>

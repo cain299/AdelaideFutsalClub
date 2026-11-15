@@ -1,0 +1,64 @@
+---
+import '@fontsource/big-shoulders-display/latin-800';
+import '@fontsource/big-shoulders-display/latin-900';
+import '@fontsource-variable/archivo';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { site, socials } from '../data/site';
+import ogImage from '../assets/instagram/DLe3QZJJuKN.jpg';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description = site.description } = Astro.props;
+const fullTitle = title ? `${title} | ${site.name}` : `${site.name} | Futsal in Adelaide`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogUrl = new URL(ogImage.src, Astro.site);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SportsClub',
+  name: site.name,
+  alternateName: site.legalName,
+  sport: 'Futsal',
+  foundingDate: String(site.founded),
+  email: site.email,
+  url: Astro.site?.toString(),
+  areaServed: 'Adelaide, South Australia',
+  sameAs: socials.map((s) => s.url),
+};
+---
+
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/png" href="/crest-192.png" />
+    <link rel="apple-touch-icon" href="/crest-192.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="theme-color" content="#000000" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

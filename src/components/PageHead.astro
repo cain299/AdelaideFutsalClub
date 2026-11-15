@@ -1,0 +1,18 @@
+---
+import CourtLines from './CourtLines.astro';
+
+interface Props {
+  title: string;
+  lede?: string;
+}
+const { title, lede } = Astro.props;
+---
+
+<header class="page-head">
+  <CourtLines />
+  <div class="wrap" style="position: relative">
+    <h1>{title}</h1>
+    {lede && <p class="lede">{lede}</p>}
+    <slot />
+  </div>
+</header>

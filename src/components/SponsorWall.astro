@@ -1,0 +1,56 @@
+---
+import { sponsors } from '../data/sponsors';
+
+interface Props {
+  showAwards?: boolean;
+}
+const { showAwards = false } = Astro.props;
+---
+
+<ul class="wall">
+  {sponsors.map((s) => (
+    <li class={s.tier}>
+      {s.url ? (
+        <a href={s.url} target="_blank" rel="noopener" class="name">{s.name}</a>
+      ) : (
+        <span class="name">{s.name}</span>
+      )}
+      {showAwards && s.award && <span class="award">Presents {s.award}</span>}
+    </li>
+  ))}
+</ul>
+
+<style>
+  .wall {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    border-top: 1px solid var(--court-line);
+    border-left: 1px solid var(--court-line);
+  }
+  li {
+    display: grid;
+    align-content: center;
+    gap: 0.35rem;
+    min-height: 7.5rem;
+    padding: 1.25rem 1.5rem;
+    border-right: 1px solid var(--court-line);
+    border-bottom: 1px solid var(--court-line);
+  }
+  .major { grid-column: span 2; min-height: 9rem; }
+  .name {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.5rem;
+    line-height: 1;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .major .name { font-size: 2.1rem; }
+  .award { color: var(--muted-dark); font-size: 0.875rem; }
+  @media (max-width: 34rem) {
+    .major { grid-column: auto; }
+  }
+</style>

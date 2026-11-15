@@ -1,0 +1,59 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "24"
+
+# Old WordPress URLs -> new pages, so existing links and search results keep working.
+[[redirects]]
+  from = "/futsal/"
+  to = "/about/"
+  status = 301
+[[redirects]]
+  from = "/testimonials/"
+  to = "/about/"
+  status = 301
+[[redirects]]
+  from = "/academies/"
+  to = "/teams/"
+  status = 301
+[[redirects]]
+  from = "/teams/*"
+  to = "/teams/"
+  status = 301
+[[redirects]]
+  from = "/junior-nationals-teams/"
+  to = "/honours/"
+  status = 301
+[[redirects]]
+  from = "/nationals-tournament/"
+  to = "/honours/"
+  status = 301
+[[redirects]]
+  from = "/merchandise/"
+  to = "/contact/"
+  status = 301
+[[redirects]]
+  from = "/news/"
+  to = "/"
+  status = 301
+[[redirects]]
+  from = "/gallery/"
+  to = "/"
+  status = 301
+[[redirects]]
+  from = "/videos/"
+  to = "/"
+  status = 301
+
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

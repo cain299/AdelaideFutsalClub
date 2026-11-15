@@ -1,0 +1,70 @@
+---
+// Top-down half court showing the five futsal positions, named the way the club names them
+// in its Weekly Honours "Team of the Week".
+const positions = [
+  { name: 'Goalkeeper', x: 90, y: 250, note: 'Last line, first pass' },
+  { name: 'Anchor', x: 210, y: 250, note: 'Reads the play, sets the tempo' },
+  { name: 'Left Flank', x: 330, y: 95, note: 'Width and runs in behind' },
+  { name: 'Right Flank', x: 330, y: 405, note: 'Width and runs in behind' },
+  { name: 'Pivot', x: 470, y: 250, note: 'Holds it up, turns, finishes' },
+];
+---
+
+<figure class="diagram">
+  <svg viewBox="0 0 560 500" role="img" aria-labelledby="court-title court-desc">
+    <title id="court-title">The five positions on a futsal court</title>
+    <desc id="court-desc">
+      A goalkeeper in goal, the anchor in front of them, a left and right flank out wide, and the pivot furthest forward.
+    </desc>
+    <g class="lines" fill="none" stroke-width="2">
+      <rect x="20" y="20" width="600" height="460" />
+      <line x1="540" y1="20" x2="540" y2="480" />
+      <circle cx="540" cy="250" r="90" />
+      <path d="M20 130 A 120 120 0 0 1 140 240 L 140 260 A 120 120 0 0 1 20 370" />
+      <rect x="4" y="215" width="16" height="70" />
+    </g>
+    <g class="moves" fill="none" stroke-width="2" stroke-dasharray="6 7">
+      <path d="M210 250 C 260 180, 300 130, 330 95" />
+      <path d="M330 405 C 400 360, 440 300, 470 250" />
+    </g>
+    {positions.map((p) => (
+      <g class="pos" transform={`translate(${p.x} ${p.y})`}>
+        <circle r="17" />
+        <text class="name" y={p.y < 150 ? -30 : 42} text-anchor="middle">{p.name}</text>
+      </g>
+    ))}
+  </svg>
+  <figcaption>
+    <ul>
+      {positions.map((p) => (
+        <li><strong>{p.name}</strong> {p.note}</li>
+      ))}
+    </ul>
+  </figcaption>
+</figure>
+
+<style>
+  .diagram { margin: 0; }
+  svg { width: 100%; height: auto; overflow: hidden; }
+  .lines { stroke: #c9c5bf; }
+  .moves { stroke: var(--orange); }
+  .pos circle { fill: var(--orange); stroke: var(--ink); stroke-width: 3; }
+  .name {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 26px;
+    text-transform: uppercase;
+    fill: var(--ink);
+  }
+  figcaption ul {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: 0.5rem 1.5rem;
+    font-size: 0.95rem;
+    color: var(--muted-light);
+  }
+  figcaption strong { color: var(--ink); margin-right: 0.35em; }
+</style>

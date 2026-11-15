@@ -1,0 +1,80 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import { honours } from '../data/honours';
+import champions from '../assets/instagram/DLe3QZJJuKN.jpg';
+---
+
+<Base title="Honours" description="Every title won by Adelaide Lions Futsal Club, from the 2016 league titles to the 2025 Division 1 championship.">
+  <PageHead title="Honours" lede="State league titles, national championships and individual awards, season by season." />
+
+  <section class="section">
+    <div class="wrap layout">
+      <ol class="timeline" reversed>
+        {honours.map((s) => (
+          <li>
+            <div class="year-col">
+              <span class="year">{s.year}</span>
+              {s.headline && <span class="headline">{s.headline}</span>}
+            </div>
+            <ul class="items">
+              {s.items.map((i) => (
+                <li class={i.major ? 'major' : ''}>
+                  <strong>{i.title}</strong>
+                  {i.detail && <span>{i.detail}</span>}
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ol>
+      <figure class="aside">
+        <Image src={champions} alt="The senior squad lifting the Division 1 trophy" widths={[480, 640]} sizes="(max-width: 52rem) 90vw, 30vw" />
+        <figcaption>Senior Men, Futsal SA Division 1 Champions 2025.</figcaption>
+      </figure>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .layout {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: clamp(2.5rem, 6vw, 5rem);
+    align-items: start;
+  }
+  .timeline { list-style: none; margin: 0; padding: 0; }
+  .timeline > li {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: 1.5rem;
+    padding-block: 2rem;
+    border-top: 1px solid var(--court-line);
+  }
+  .year {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: var(--step-4);
+    line-height: 0.9;
+    color: var(--ember);
+  }
+  .headline { display: block; margin-top: 0.5rem; color: var(--muted-dark); font-size: 0.9rem; }
+  .items { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.9rem; }
+  .items li { display: grid; gap: 0.1rem; padding-left: 1.1rem; border-left: 2px solid var(--court-line); }
+  .items li.major { border-left-color: var(--ember); }
+  .items strong { font-weight: 600; }
+  .major strong { font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; text-transform: uppercase; line-height: 1.05; }
+  .items span { color: var(--muted-dark); font-size: 0.95rem; }
+  .aside { position: sticky; top: 6rem; margin: 2rem 0 0; }
+  .aside img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+  .aside figcaption { margin-top: 0.75rem; font-size: var(--step--1); color: var(--muted-dark); }
+  @media (max-width: 52rem) {
+    .layout { grid-template-columns: 1fr; }
+    .aside { position: static; max-width: 24rem; }
+  }
+  @media (max-width: 30rem) {
+    .timeline > li { grid-template-columns: 1fr; gap: 1rem; }
+  }
+</style>
